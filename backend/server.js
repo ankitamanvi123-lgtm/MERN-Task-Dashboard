@@ -25,8 +25,13 @@ const Task = mongoose.model("Task", TaskSchema);
 
 // Get all tasks
 app.get("/tasks", async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (error) {
+    console.log("GET /tasks error:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Add task
@@ -56,6 +61,8 @@ app.put("/tasks/:id", async (req, res) => {
   res.json(task);
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
