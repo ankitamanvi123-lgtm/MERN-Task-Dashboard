@@ -6,8 +6,7 @@ function App() {
   const [newTask, setNewTask] = useState("");
 
   const fetchTasks = () => {
-    axios
-      .get("http://localhost:5000/tasks")
+    axios.get("https://mern-task-dashboard-2.onrender.com/tasks")
       .then((res) => setTasks(res.data))
       .catch((err) => console.log(err));
   };
@@ -19,7 +18,7 @@ function App() {
   const addTask = async () => {
     if (!newTask.trim()) return;
 
-    await axios.post("http://localhost:5000/tasks", {
+    await axios.post("https://mern-task-dashboard-2.onrender.com/tasks", {
       text: newTask,
     });
 
@@ -28,12 +27,12 @@ function App() {
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:5000/tasks/${id}`);
+    await axios.delete(`https://mern-task-dashboard-2.onrender.com/tasks/${id}`);
     fetchTasks();
   };
 
   const toggleComplete = async (id) => {
-    await axios.put(`http://localhost:5000/tasks/${id}`);
+    await axios.put(`https://mern-task-dashboard-2.onrender.com/tasks/${id}`);
     fetchTasks();
   };
 
