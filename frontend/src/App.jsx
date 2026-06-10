@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
   const fetchTasks = () => {
-    axios.get("https://mern-task-dashboard-2.onrender.com/tasks")
+    axios.get(`${API}/tasks`)
       .then((res) => setTasks(res.data))
       .catch((err) => console.log(err));
   };
@@ -18,7 +19,7 @@ function App() {
   const addTask = async () => {
     if (!newTask.trim()) return;
 
-    await axios.post("https://mern-task-dashboard-2.onrender.com/tasks", {
+    await axios.post(`${API}/tasks`, {
       text: newTask,
     });
 
@@ -27,12 +28,12 @@ function App() {
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`https://mern-task-dashboard-2.onrender.com/tasks/${id}`);
+    axios.delete(`${API}/tasks/${id}`)
     fetchTasks();
   };
 
   const toggleComplete = async (id) => {
-    await axios.put(`https://mern-task-dashboard-2.onrender.com/tasks/${id}`);
+    axios.put(`${API}/tasks/${id}`)
     fetchTasks();
   };
 
