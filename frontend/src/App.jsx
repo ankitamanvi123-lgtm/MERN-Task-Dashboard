@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 const API = import.meta.env.VITE_API_URL;
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const fetchTasks = () => {
-    axios.get(`${API}/tasks`)
+    setLoading(true);
+    axios
+      .get(`${API}/tasks`)
       .then((res) => setTasks(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -28,12 +33,12 @@ function App() {
   };
 
   const deleteTask = async (id) => {
-    axios.delete(`${API}/tasks/${id}`)
+    await axios.delete(`${API}/tasks/${id}`);
     fetchTasks();
   };
 
   const toggleComplete = async (id) => {
-    axios.put(`${API}/tasks/${id}`)
+    await axios.put(`${API}/tasks/${id}`);
     fetchTasks();
   };
 
@@ -41,7 +46,7 @@ function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg,#dbeafe,#f8fafc)",
+        background: "linear-gradient(135deg, #667eea, #764ba2)",
         padding: "40px",
         fontFamily: "Arial",
       }}
@@ -52,33 +57,24 @@ function App() {
           margin: "auto",
           background: "white",
           padding: "30px",
-          borderRadius: "20px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+          borderRadius: "16px",
+          boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
         }}
       >
-        <h1
-          style={{
-            textAlign: "center",
-            color: "#1e3a8a",
-          }}
-        >
+        <h1 style={{ textAlign: "center", color: "#1e3a8a" }}>
           📋 MERN Task Dashboard
         </h1>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginTop: "20px",
-          }}
-        >
+        <h3 style={{ textAlign: "center", color: "#555" }}>
+          Total Tasks: {tasks.length}
+        </h3>
+
+        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
           <input
             type="text"
             placeholder="Enter Task..."
             value={newTask}
-            onChange={(e) =>
-              setNewTask(e.target.value)
-            }
+            onChange={(e) => setNewTask(e.target.value)}
             style={{
               flex: 1,
               padding: "12px",
@@ -90,7 +86,7 @@ function App() {
           <button
             onClick={addTask}
             style={{
-              background: "#2563eb",
+              background: "linear-gradient(90deg, #2563eb, #1e40af)",
               color: "white",
               border: "none",
               padding: "12px 20px",
@@ -102,17 +98,22 @@ function App() {
           </button>
         </div>
 
-        <h2 style={{ marginTop: "30px" }}>
-          My Tasks
-        </h2>
+        <h2 style={{ marginTop: "30px" }}>My Tasks</h2>
+
+        {loading && <p>Loading tasks...</p>}
+
+        {!loading && tasks.length === 0 && (
+          <p style={{ textAlign: "center", color: "#888" }}>
+            No tasks yet. Add your first task 🚀
+          </p>
+        )}
 
         {tasks.map((task) => (
           <div
             key={task._id}
             style={{
               display: "flex",
-              justifyContent:
-                "space-between",
+              justifyContent: "space-between",
               alignItems: "center",
               background: "#f8fafc",
               padding: "15px",
@@ -122,10 +123,7 @@ function App() {
           >
             <span
               style={{
-                textDecoration:
-                  task.completed
-                    ? "line-through"
-                    : "none",
+                textDecoration: task.completed ? "line-through" : "none",
                 fontSize: "18px",
               }}
             >
@@ -134,14 +132,11 @@ function App() {
 
             <div>
               <button
-                onClick={() =>
-                  toggleComplete(task._id)
-                }
+                onClick={() => toggleComplete(task._id)}
                 style={{
-                  background:
-                    task.completed
-                      ? "#f59e0b"
-                      : "#22c55e",
+                  background: task.completed
+                    ? "#f59e0b"
+                    : "#22c55e",
                   color: "white",
                   border: "none",
                   padding: "8px 12px",
@@ -150,15 +145,11 @@ function App() {
                   cursor: "pointer",
                 }}
               >
-                {task.completed
-                  ? "Undo"
-                  : "Complete"}
+                {task.completed ? "Undo" : "Complete"}
               </button>
 
               <button
-                onClick={() =>
-                  deleteTask(task._id)
-                }
+                onClick={() => deleteTask(task._id)}
                 style={{
                   background: "#ef4444",
                   color: "white",
